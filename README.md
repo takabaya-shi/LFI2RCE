@@ -14,7 +14,9 @@ If you give a vulnerable URL to LFI, it will try LFI of a common file.
 root@kali:/# python lfi2rce.py --linux --username charix 10.10.10.84 /browse.php?file=../../../../../..  --error "failed to open stream" -v
 ```
 ## Requirement
-
+```txt
+root@kali:/# pip3 install requests
+```
 ## Usage
 ```txt
 root@kali:/# python lfi2rce.py -h
