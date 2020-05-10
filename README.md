@@ -6,6 +6,7 @@ LFI to RCE tool.
 ## Description
 This tool is used to exploit an LFI vulnerability to obtain a Webshell.
 If you give a vulnerable URL to LFI, it will try LFI of a common file.
+It does not have autopwn function, so it can be used in OSCP Exam.
 ## Demo
 #### HackTheBox Poison.
 ![LFI-Poison](https://user-images.githubusercontent.com/56021519/81492511-44e78600-92d3-11ea-9ce5-1aade0b48f16.gif)
@@ -32,7 +33,7 @@ root@kali:/# python lfi2rce.py -h
                    |_____|_|   |___|_____|_| \_\____|_____| 
 usage: lfi2rce.py [-h] [--nullbyte] [--ssl] [--dir-file DIR_FILE] [--windows]
                   [--linux] [--username USERNAME] [--debug] [--error ERROR]
-                  [-v] [-k] [-o OUTDIR] [-s]
+                  [-p PORT] [-v] [-k] [-o OUTDIR] [-s]
                   host path
 
 brute force common file
@@ -49,10 +50,11 @@ optional arguments:
   --dir-file DIR_FILE   Input file for directory brute force
   --windows             Windows server
   --linux               linux server
-  --username USERNAME   enter username if you know
+  --username USERNAME   enter username if you know.
   --debug               Complete setup without running against host
-  --error ERROR         Enter Error Messgage. Example: No such file or
-                        directory
+  --error ERROR         Enter Error Messgage. Example: "No such file or
+                        directory" "failed to open stream"
+  -p PORT, --port PORT  Target port. Default: http 80 https 443
   -v, --verbose         Verbose output
   -k, --verify-ssl      Verify SSL certificates
   -o OUTDIR, --outdir OUTDIR
