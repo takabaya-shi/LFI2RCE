@@ -2,7 +2,7 @@ LFI2RCE
 ====
 
 ## Overview
-LFI to RCE tool.
+LFI to RCE tool for OSCP.
 ## Description
 This tool is used to exploit an LFI vulnerability to obtain a Webshell.
 If you give a vulnerable URL to LFI, it will try LFI of a common file.
