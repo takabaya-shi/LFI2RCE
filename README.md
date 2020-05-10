@@ -6,7 +6,8 @@ LFI to RCE tool.
 ## Description
 This tool is used to exploit an LFI vulnerability to obtain a Webshell.
 If you give a vulnerable URL to LFI, it will try LFI of a common file.
-It does not have autopwn function, so it can be used in OSCP Exam.
+It does not have autopwn function, so it can be used in OSCP Exam.  
+It is forbidden to use it for anything other than penetration testing.
 ## Demo
 #### HackTheBox Poison.
 ![LFI-Poison](https://user-images.githubusercontent.com/56021519/81492511-44e78600-92d3-11ea-9ce5-1aade0b48f16.gif)
